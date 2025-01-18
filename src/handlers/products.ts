@@ -44,3 +44,17 @@ export const getProducts1 = async (req: Request, resp: Response) => {
         resp.status(503).json({ error: "Error listando productos" })
     }
 }
+
+export const getProductById = async (req: Request, resp: Response) => {
+    try {
+        const { id } = req.params
+        const product = await Product.findByPk(id)
+        if (product)
+            resp.json({ data: product })
+        else
+            resp.status(404).json({ error: "Producto no encontrado" })
+    } catch (error) {
+        console.log(error)
+        resp.status(503).json({ error: "Error listando productos" })
+    }
+}

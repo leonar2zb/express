@@ -1,12 +1,17 @@
 import { Router } from "express"
-import { createProduct, getProducts } from "./handlers/products"
-import { body } from 'express-validator'
+import { createProduct, getProductById, getProducts } from "./handlers/products"
+import { body, param } from 'express-validator'
 import { handleInputErrors } from "./middleware"
 
 const router = Router()
 
 //Definición de las rutas
 router.get('/', getProducts)
+
+router.get('/:id',
+    param('id').isInt({ min: 1 }).withMessage('Id no válido'),
+    handleInputErrors,
+    getProductById)
 
 router.post('/',
     body('name').notEmpty().withMessage('El nombre del producto es obligatorio'),
