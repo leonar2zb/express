@@ -1,14 +1,12 @@
 import { Router } from "express"
-import { createProduct } from "./handlers/products"
+import { createProduct, getProducts } from "./handlers/products"
 import { body } from 'express-validator'
 import { handleInputErrors } from "./middleware"
 
 const router = Router()
 
 //Definición de las rutas
-router.get('/', (req, resp) => {
-    resp.send("Servidor corriendo")
-})
+router.get('/', getProducts)
 
 router.post('/',
     body('name').notEmpty().withMessage('El nombre del producto es obligatorio'),
