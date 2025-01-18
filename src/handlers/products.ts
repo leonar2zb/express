@@ -87,6 +87,20 @@ export const updateAvailability = async (req: Request, resp: Response) => {
         resp.json({ data: product })
     } catch (error) {
         console.log(error)
-        resp.status(503).json({ error: "Error listando productos" })
+        resp.status(503).json({ error: "Error localizando productos" })
+    }
+}
+
+export const deleteProduct = async (req: Request, resp: Response) => {
+    try {
+        const { id } = req.params
+        const product = await Product.findByPk(id)
+        if (!product)
+            resp.status(404).json({ error: "Producto no encontrado" })
+        await product.destroy()
+        resp.json({ data: "Ha sido eliminado el producto" })
+    } catch (error) {
+        console.log(error)
+        resp.status(503).json({ error: "Error eliminando producto" })
     }
 }
