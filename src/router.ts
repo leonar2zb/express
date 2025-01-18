@@ -1,4 +1,5 @@
 import { Router } from "express"
+import { createProduct } from "./handlers/products"
 
 const router = Router()
 
@@ -7,18 +8,6 @@ router.get('/', (req, resp) => {
     resp.send("Servidor corriendo")
 })
 
-router.post('/', (req, resp) => {
-    const datos = [{
-        "nombre": "Leo",
-        "edad": 48,
-        "masculino": true
-    }, {
-        "nombre": "Betsy",
-        "edad": 11,
-        "masculino": false
-    }]
-
-    resp.json(datos)
-})
+router.post('/', createProduct)
 
 export default router

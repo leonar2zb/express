@@ -18,6 +18,9 @@ connectDB()
 
 const server = express()
 
+// uso del middleware de express para interpretar JSON
+server.use(express.json())
+
 server.use('/api/products', router)
 
 export default server
