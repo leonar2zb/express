@@ -7,7 +7,8 @@ const strConecction = process.env.DATABASE_URL
 
 //para evitar error de conexión SSL, se debe anexar a la cadena "?ssl=true"
 const db = new Sequelize(strConecction, {
-    models: [__dirname + '/../models/**/*.ts']
+    models: [__dirname + '/../models/**/*.ts'],
+    logging: false
 })
 
 /*otra variante en lugar de anexar "?ssl=true" sería incluir las opciones de configuración, así:

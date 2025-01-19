@@ -8,7 +8,12 @@ async function connectDB() {
     try {
         await db.authenticate()
         db.sync()
-        console.log(colors.bgGreen("Conexión exitosa a la BD"))
+        /**
+         * comenté la salida a consola porque interfiere con los test Jest y las
+         * llamadas que son asíncronas
+         * console.log(colors.bgGreen("Conexión exitosa a la BD")) 
+         */
+
     } catch (error) {
         console.log(error)
         console.log(colors.bgRed("Ha ocurrido un error al conectar a la BD"))
@@ -22,5 +27,10 @@ const server = express()
 server.use(express.json())
 
 server.use('/api/products', router)
+
+// Esta ruta es para practicar con Jest y hacer testing
+server.get('/api', (req, res) => {
+    res.json({ msg: 'Desde API' })
+})
 
 export default server
