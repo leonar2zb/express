@@ -5,7 +5,7 @@ import { Op } from 'sequelize'
 export const createProduct = async (req: Request, resp: Response) => {
     try {
         const product = await Product.create(req.body)
-        resp.json({ data: product })
+        resp.status(201).json({ data: product })
     } catch (error) {
         console.log(error)
         resp.status(503).json({ error: "Error creando producto" })
