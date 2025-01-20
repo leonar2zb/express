@@ -94,3 +94,74 @@ describe('GET /api/products/:id', () => {
         expect(response.body.data.id).toBe(id)
     })
 })
+
+describe('PUT /api/products/:id', () => {
+    it('Should display validation error when updating a product', async () => {
+        const id = 1
+        const response = await request(server).put(`/api/products/${id}`).send({})
+        expect(response.status).toBe(400)
+        expect(response.body).toHaveProperty('errors')
+        expect(response.body.errors).toHaveLength(2)
+        expect(response.body).not.toHaveProperty('data')
+    })
+
+    it('Price should be positive', async () => {
+        const id = 1
+        const response = await request(server).put(`/api/products/${id}`).
+            send({
+                name: "La guitarra",
+                price: -333,
+                availability: true
+            })
+        expect(response.status).toBe(400)
+        expect(response.body).toHaveProperty('errors')
+        expect(response.body.errors).toHaveLength(1)
+        expect(response.body).not.toHaveProperty('data')
+        expect(response.body.errors[0].msg).toBe("Sólo números positivos aquí")
+    })
+
+    it('Should check a valid ID in the URL', async () => {
+        const response = await request(server).put('/api/products/notavalidurl').
+            send({
+                name: "La guitarra",
+                price: 333,
+                availability: true
+            })
+        expect(response.status).toBe(400)
+        expect(response.body).toHaveProperty('errors')
+        expect(response.body.errors).toHaveLength(1)
+        expect(response.body.errors[0].msg).toBe("Id no válido")
+    })
+
+    it('Should return a 404 response for a non-existen product', async () => {
+        //ID sepamos NO existe. La BD se reinicia cada vez; Id=1 siempre
+        const productId = 2000
+        const response = await request(server).put(`/api/products/${productId}`).
+            send({
+                name: "La guitarra",
+                price: 333,
+                availability: true
+            })
+        expect(response.status).toBe(404)
+        expect(response.body).toHaveProperty('error')
+        expect(response.body.error).toBe('Producto no encontrado')
+    })
+
+    it('Should update an existing product', async () => {
+        //ID sepamos SI existe. La BD se reinicia cada vez; Id=1 siempre
+        const productId = 1
+        const newName = "Nuevo producto actualizado"
+        const response = await request(server).put(`/api/products/${productId}`).
+            send({
+                name: newName,
+                price: 333,
+                availability: true
+            })
+        expect(response.status).toBe(200)
+        expect(response.body).toHaveProperty('data')
+        expect(response.body.data.name).toBe(newName)
+        expect(response.body).not.toHaveProperty('error')
+    })
+
+
+})
