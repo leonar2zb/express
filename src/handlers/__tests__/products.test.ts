@@ -31,8 +31,21 @@ describe('POST /api/products', () => {
         expect(response.status).toBe(400)
         expect(response.body).toHaveProperty('errors')
         // Comprobar si algún error tiene un value menor que cero 
-        const hasNegativeValue = response.body.errors.some(error => error.value < 0); 
+        const hasNegativeValue = response.body.errors.some(error => error.value < 0);
         expect(hasNegativeValue).toBe(true);
+        expect(response.body).not.toHaveProperty('data')
+        expect(response.body.errors).toHaveLength(1)
+    })
+
+    it('should price be a number', async () => {
+        const response = await request(server).post('/api/products').send({
+            name: 'Probando',
+            price: "hola"
+        })
+        expect(response.status).toBe(400)
+        expect(response.body).toHaveProperty('errors')
+        // Cadena del mensaje de error recibido
+        expect(response.body.errors).toContainEqual(expect.objectContaining({ msg: 'Sólo números positivos aquí' }));
         expect(response.body).not.toHaveProperty('data')
         expect(response.body.errors).toHaveLength(1)
     })
