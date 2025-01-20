@@ -50,3 +50,19 @@ describe('POST /api/products', () => {
         expect(response.body.errors).toHaveLength(1)
     })
 })
+
+describe('GET /api/products', () => {
+    it('should exists url /api/products', async () => {
+        const response = await request(server).get('/api/products')
+        expect(response.status).not.toBe(404)
+    })
+
+    it('should get a JSON response with products', async () => {
+        const response = await request(server).get('/api/products')
+        expect(response.status).toBe(200)
+        expect(response.body).toHaveProperty('data')
+        expect(response.body).not.toHaveProperty('error')
+        //se espera 1 item pq cada test reinicia la BD quedando la del test createproduct
+        expect(response.body.data).toHaveLength(1)
+    })
+})
