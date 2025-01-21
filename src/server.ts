@@ -16,7 +16,6 @@ async function connectDB() {
 
     } catch (error) {
         console.log(error)
-        console.log(colors.bgRed("Ha ocurrido un error al conectar a la BD"))
     }
 }
 connectDB()
