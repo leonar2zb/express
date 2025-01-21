@@ -1,5 +1,6 @@
 import request from "supertest"
-import server from "../server"
+import server, { connectDB } from "../server"
+import db from "../config/db"
 
 describe('Primer test', () => {
 
@@ -22,4 +23,20 @@ describe('GET /api', () => {
         expect(res.body.msg).toBe('Desde API')
     })
 
+})
+
+jest.mock('../config/db')
+
+describe('Test ConnectDB', () => {
+    it('Should handle database error connection', async () => {
+        jest.spyOn(db, 'authenticate').
+            mockRejectedValueOnce(new Error('Hubo un error en la conexión'))
+        const consoleSpy = jest.spyOn(console, 'log')
+
+        await connectDB()
+
+        expect(consoleSpy).toHaveBeenCalledWith(
+            expect.stringContaining('Hubo un error en la conexión')
+        )
+    })
 })
