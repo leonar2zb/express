@@ -25,7 +25,7 @@ export const getProducts = async (req: Request, resp: Response) => {
 /* El siguiente método es para ilustrar el uso de condiciones y opciones
 Ver documentación en:
 https://sequelize.org/docs/v6/core-concepts/model-querying-basics/
-*/
+
 export const getProducts1 = async (req: Request, resp: Response) => {
     try {
         const products = await Product.findAll({
@@ -43,7 +43,7 @@ export const getProducts1 = async (req: Request, resp: Response) => {
         console.log(error)
         resp.status(503).json({ error: "Error listando productos" })
     }
-}
+} */
 
 export const getProductById = async (req: Request, resp: Response) => {
     try {
@@ -81,7 +81,7 @@ export const updateAvailability = async (req: Request, resp: Response) => {
         const { id } = req.params
         const product = await Product.findByPk(id)
         if (!product)
-            resp.status(404).json({ error: "Producto no encontrado" })
+            return resp.status(404).json({ error: "Producto no encontrado" })
         product.availability = req.body.availability
         await product.save()
         resp.json({ data: product })

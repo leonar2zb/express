@@ -167,8 +167,58 @@ describe('PUT /api/products/:id', () => {
 })
 
 
-describe('DELETE /api/products/:id', () => {
+describe('PATCH /api/products/:id', () => {
+    it('Should display validation error when updating availability product', async () => {
+        const id = 1
+        const response = await request(server).patch(`/api/products/${id}`).
+            send({ availability: "cambio sin boolean" })
+        expect(response.status).toBe(400)
+        expect(response.body).toHaveProperty('errors')
+        expect(response.body.errors).toHaveLength(1)
+        expect(response.body).not.toHaveProperty('data')
+        expect(response.body.errors[0].msg).toBe("Campo availability de tipo boolean y obligatorio")
+    })
 
+    it('Should check a valid ID in the URL', async () => {
+        const response = await request(server).patch('/api/products/notavalidurl').
+            send({
+                availability: true
+            })
+        expect(response.status).toBe(400)
+        expect(response.body).toHaveProperty('errors')
+        expect(response.body.errors).toHaveLength(1)
+        expect(response.body.errors[0].msg).toBe("Id no válido")
+    })
+
+    it('Should return a 404 response for a non-existen product', async () => {
+        //ID sepamos NO existe. La BD se reinicia cada vez; Id=1 siempre
+        const productId = 2000
+        const response = await request(server).patch(`/api/products/${productId}`).
+            send({
+                availability: true
+            })
+        expect(response.status).toBe(404)
+        expect(response.body).toHaveProperty('error')
+        expect(response.body.error).toBe('Producto no encontrado')
+    })
+
+    it('Should update an existing product', async () => {
+        //ID sepamos SI existe. La BD se reinicia cada vez; Id=1 siempre
+        const productId = 1
+        const newName = "Nuevo producto actualizado"
+        const response = await request(server).patch(`/api/products/${productId}`).
+            send({
+                availability: false
+            })
+        expect(response.status).toBe(200)
+        expect(response.body).toHaveProperty('data')
+        expect(response.body.data.availability).toBe(false)
+        expect(response.body).not.toHaveProperty('error')
+    })
+})
+
+
+describe('DELETE /api/products/:id', () => {
 
     it('Should check a valid ID in the URL', async () => {
         const response = await request(server).delete('/api/products/notavalidurl')
@@ -187,7 +237,6 @@ describe('DELETE /api/products/:id', () => {
         expect(response.body.error).toBe('Producto no encontrado')
     })
 
-
     it('Should delete an existing product', async () => {
         //ID sepamos SI existe. La BD se reinicia cada vez; Id=1 siempre
         const productId = 1
@@ -197,6 +246,5 @@ describe('DELETE /api/products/:id', () => {
         expect(response.body.data).toBe("Ha sido eliminado el producto")
         expect(response.body).not.toHaveProperty('error')
     })
-
 
 })
