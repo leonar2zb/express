@@ -1,5 +1,5 @@
 import { Router } from "express"
-import { createProduct, getProductById, getProducts, updateAvailability, updateProduct } from "./handlers/products"
+import { createProduct, deleteProduct, getProductById, getProducts, updateAvailability, updateProduct } from "./handlers/products"
 import { body, param } from 'express-validator'
 import { handleInputErrors } from "./middleware"
 
@@ -31,5 +31,10 @@ router.post('/',
     body('price').isFloat({ gt: 0 }).withMessage('Sólo números positivos aquí'),
     handleInputErrors,
     createProduct)
+
+router.delete('/:id',
+    param('id').isInt({ min: 1 }).withMessage('Id no válido'),
+    handleInputErrors,
+    deleteProduct)
 
 export default router
