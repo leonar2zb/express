@@ -88,12 +88,94 @@ router.get('/:id',
     handleInputErrors,
     getProductById)
 
+/**
+ * @swagger
+ * /api/products/{id}:
+ *      put:
+ *          summary: Update a product by Id
+ *          tags:
+ *              - Products
+ *          description: Updates the product´s information given its Id
+ *          parameters:
+ *            - in: path
+ *              name: id
+ *              description: The id of the product to update
+ *              required: true
+ *              schema:
+ *                 type: integer
+ *          requestBody:
+ *              required: true
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              name:
+ *                                  type: string
+ *                                  example: "Teclado gamer RGB inalámbrico"
+ *                              price:
+ *                                  type: number
+ *                                  example: 25.75
+ *          responses:
+ *              200:
+ *                  description: Succesful response
+ *                  content:
+ *                      application/json:
+ *                          schema:                               
+ *                              $ref: '#/components/schemas/Product'
+ *              404:
+ *                  description: Not found 
+ *              400: 
+ *                  description: Bad request - Invalid ID              
+ *   
+ */
+
 router.put('/:id',
     param('id').isInt({ min: 1 }).withMessage('Id no válido'),
     body('name').notEmpty().withMessage('El nombre del producto es obligatorio'),
-    body('price').isFloat({ gt: 0 }).withMessage('Sólo números positivos aquí'),
+    body('price')
+        .exists().withMessage('El precio es obligatorio')
+        .isFloat({ gt: 0 }).withMessage('Sólo números positivos aquí'),
     handleInputErrors,
     updateProduct)
+
+/**
+ * @swagger
+ * /api/products/{id}:
+ *      patch:
+ *          summary: Update a product availability by Id
+ *          tags:
+ *              - Products
+ *          description: Updates availability of a product given its Id
+ *          parameters:
+ *            - in: path
+ *              name: id
+ *              description: The id of the product to update its availability
+ *              required: true
+ *              schema:
+ *                 type: integer
+ *          requestBody:
+ *              required: true
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              availability:
+ *                                  type: boolean
+ *                                  example: true
+ *          responses:
+ *              200:
+ *                  description: Succesful response
+ *                  content:
+ *                      application/json:
+ *                          schema:                               
+ *                              $ref: '#/components/schemas/Product'
+ *              404:
+ *                  description: Not found 
+ *              400: 
+ *                  description: Bad request - Invalid ID              
+ */
 
 router.patch('/:id',
     param('id').isInt({ min: 1 }).withMessage('Id no válido'),
@@ -137,7 +219,9 @@ router.patch('/:id',
 
 router.post('/',
     body('name').notEmpty().withMessage('El nombre del producto es obligatorio'),
-    body('price').isFloat({ gt: 0 }).withMessage('Sólo números positivos aquí'),
+    body('price')
+        .exists().withMessage('El precio es obligatorio')
+        .isFloat({ gt: 0 }).withMessage('Sólo números positivos aquí'),
     handleInputErrors,
     createProduct)
 
