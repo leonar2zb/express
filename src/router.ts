@@ -101,6 +101,40 @@ router.patch('/:id',
     handleInputErrors,
     updateAvailability)
 
+
+/**
+ * @swagger
+ * /api/products:
+ *      post:
+ *          summary: Create a new product
+ *          tags:
+ *              - Products
+ *          description: Creates and returns the new just created product
+ *          requestBody:
+ *              required: true
+ *              content:
+ *                  application/json:
+ *                      schema:
+ *                          type: object
+ *                          properties:
+ *                              name:
+ *                                  type: string
+ *                                  example: "Teclado gamer RGB inalámbrico"
+ *                              price:
+ *                                  type: number
+ *                                  example: 25.75
+ *          responses:
+ *              201:
+ *                  description: Product created succesfuly
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                             $ref: '#/components/schemas/Product'
+ *              400: 
+ *                  description: Bad request - Invalid data              
+ *   
+ */
+
 router.post('/',
     body('name').notEmpty().withMessage('El nombre del producto es obligatorio'),
     body('price').isFloat({ gt: 0 }).withMessage('Sólo números positivos aquí'),
