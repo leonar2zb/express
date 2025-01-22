@@ -32,7 +32,27 @@ const router = Router()
 
 
 
-//Definición de las rutas
+
+/**
+ * @swagger
+ * /api/products:
+ *      get:
+ *          summary: Get a list of products
+ *          tags:
+ *              - Products
+ *          description: Returns a list of products registered on the system
+ *          responses:
+ *              200:
+ *                  description: Succesful response
+ *                  content:
+ *                      application/json:
+ *                          schema:
+ *                              type: array
+ *                              items:                                   
+ *                                  $ref: '#/components/schemas/Product'
+ *   
+ */
+
 router.get('/', getProducts)
 
 router.get('/:id',
