@@ -225,6 +225,37 @@ router.post('/',
     handleInputErrors,
     createProduct)
 
+
+/**
+* @swagger
+* /api/products/{id}:
+*      delete:
+*          summary: Delestes a product by Id
+*          tags:
+*              - Products
+*          description: Permantly removes the given product by its Id
+*          parameters:
+*            - in: path
+*              name: id
+*              description: The id of the product to update
+*              required: true
+*              schema:
+*                 type: integer
+*          responses:
+*              200:
+*                  description: Succesful response
+*                  content:
+*                       application/json:
+*                           schema:                    
+*                               type: string
+*                               value: "Ha sido eliminado el producto"
+*              404:
+*                  description: Not found 
+*              400: 
+*                  description: Bad request - Invalid ID              
+*/
+
+
 router.delete('/:id',
     param('id').isInt({ min: 1 }).withMessage('Id no válido'),
     handleInputErrors,
