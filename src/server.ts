@@ -5,6 +5,7 @@ import router from "./router";
 import db from "./config/db";
 import cors, { CorsOptions } from "cors";
 import colors from 'colors'
+import morgan from 'morgan'
 
 //Conectar a la BD
 export async function connectDB() {
@@ -36,7 +37,12 @@ const CorsOptions: CorsOptions = {
 
 const server = express()
 
+// uso del middleware de express para logs
+server.use(morgan('dev'))
+
+// uso del middleware de express para habilitar CORS
 server.use(cors(CorsOptions))
+
 // uso del middleware de express para interpretar JSON
 server.use(express.json())
 
