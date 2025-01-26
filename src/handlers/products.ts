@@ -8,7 +8,7 @@ export const createProduct = async (req: Request, resp: Response) => {
 }
 
 export const getProducts = async (req: Request, resp: Response) => {
-    const products = await Product.findAll()
+    const products = await Product.findAll({ order: [['id', 'DESC']] })
     resp.json({ data: products })
 }
 
