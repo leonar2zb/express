@@ -61,7 +61,7 @@ export const updateAvailability = async (req: Request, resp: Response) => {
     const product = await Product.findByPk(id)
     if (!product)
         return resp.status(404).json({ error: "Producto no encontrado" })
-    product.availability = req.body.availability
+    product.availability = !product.availability
     await product.save()
     resp.json({ data: product })
 }

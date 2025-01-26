@@ -153,17 +153,7 @@ router.put('/:id',
  *              description: The id of the product to update its availability
  *              required: true
  *              schema:
- *                 type: integer
- *          requestBody:
- *              required: true
- *              content:
- *                  application/json:
- *                      schema:
- *                          type: object
- *                          properties:
- *                              availability:
- *                                  type: boolean
- *                                  example: true
+ *                 type: integer          
  *          responses:
  *              200:
  *                  description: Succesful response
@@ -179,7 +169,6 @@ router.put('/:id',
 
 router.patch('/:id',
     param('id').isInt({ min: 1 }).withMessage('Id no válido'),
-    body('availability').isBoolean().withMessage('Campo availability de tipo boolean y obligatorio'),
     handleInputErrors,
     updateAvailability)
 
@@ -218,7 +207,7 @@ router.patch('/:id',
  */
 
 router.post('/',
-    body('name').notEmpty().withMessage('El nombre del producto es obligatorio'),
+    body('name').exists().withMessage('El nombre es obligario').notEmpty().withMessage('El nombre debe tener un valor válido'),
     body('price')
         .exists().withMessage('El precio es obligatorio')
         .isFloat({ gt: 0 }).withMessage('Sólo números positivos aquí'),

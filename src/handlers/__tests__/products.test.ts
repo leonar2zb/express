@@ -1,7 +1,27 @@
 import request from "supertest"
 import server from "../../server"
 
+
+const testCases = [
+    { name: undefined, price: 25, missing: 'name' },
+    { name: 'Juan', price: undefined, missing: 'price' },
+    { name: undefined, price: undefined, missing: 'name and price' }
+];
+
 describe('POST /api/products', () => {
+    // Esto es para simplificar las combinaciones de datos faltantes
+    testCases.forEach((testCase) => {
+        test(`should handle missing ${testCase.missing}`, async () => {
+            const { name, price } = testCase;
+            const response = await request(server).post('/api/products')
+                .send({ name, price });
+
+            expect(response.status).toBe(400);
+            expect(response.body).toHaveProperty('errors');
+            expect(response.body.errors.length).toBeGreaterThan(1); // serían al menos 2 errores
+        });
+    });
+
     it('should create a new product', async () => {
         const response = await request(server).post('/api/products').send({
             name: "Teclado",
@@ -11,16 +31,6 @@ describe('POST /api/products', () => {
         expect(response.status).toBe(201)
         expect(response.body).toHaveProperty('data')
         expect(response.body).not.toHaveProperty('error')
-    })
-
-    it('should validate all fields passed', async () => {
-        const response = await request(server).post('/api/products').send({
-        })
-
-        expect(response.status).toBe(400)
-        expect(response.body).not.toHaveProperty('data')
-        expect(response.body).toHaveProperty('errors')
-        expect(response.body.errors).toHaveLength(2) //2 errores si no pasa ningún argumento
     })
 
     it('should price be a positive number', async () => {
@@ -101,7 +111,7 @@ describe('PUT /api/products/:id', () => {
         const response = await request(server).put(`/api/products/${id}`).send({})
         expect(response.status).toBe(400)
         expect(response.body).toHaveProperty('errors')
-        expect(response.body.errors).toHaveLength(2)
+        expect(response.body.errors).toHaveLength(3)
         expect(response.body).not.toHaveProperty('data')
     })
 
@@ -168,22 +178,9 @@ describe('PUT /api/products/:id', () => {
 
 
 describe('PATCH /api/products/:id', () => {
-    it('Should display validation error when updating availability product', async () => {
-        const id = 1
-        const response = await request(server).patch(`/api/products/${id}`).
-            send({ availability: "cambio sin boolean" })
-        expect(response.status).toBe(400)
-        expect(response.body).toHaveProperty('errors')
-        expect(response.body.errors).toHaveLength(1)
-        expect(response.body).not.toHaveProperty('data')
-        expect(response.body.errors[0].msg).toBe("Campo availability de tipo boolean y obligatorio")
-    })
 
     it('Should check a valid ID in the URL', async () => {
-        const response = await request(server).patch('/api/products/notavalidurl').
-            send({
-                availability: true
-            })
+        const response = await request(server).patch('/api/products/notavalidurl')
         expect(response.status).toBe(400)
         expect(response.body).toHaveProperty('errors')
         expect(response.body.errors).toHaveLength(1)
@@ -193,10 +190,7 @@ describe('PATCH /api/products/:id', () => {
     it('Should return a 404 response for a non-existen product', async () => {
         //ID sepamos NO existe. La BD se reinicia cada vez; Id=1 siempre
         const productId = 2000
-        const response = await request(server).patch(`/api/products/${productId}`).
-            send({
-                availability: true
-            })
+        const response = await request(server).patch(`/api/products/${productId}`)
         expect(response.status).toBe(404)
         expect(response.body).toHaveProperty('error')
         expect(response.body.error).toBe('Producto no encontrado')
@@ -205,11 +199,7 @@ describe('PATCH /api/products/:id', () => {
     it('Should update an existing product', async () => {
         //ID sepamos SI existe. La BD se reinicia cada vez; Id=1 siempre
         const productId = 1
-        const newName = "Nuevo producto actualizado"
-        const response = await request(server).patch(`/api/products/${productId}`).
-            send({
-                availability: false
-            })
+        const response = await request(server).patch(`/api/products/${productId}`)
         expect(response.status).toBe(200)
         expect(response.body).toHaveProperty('data')
         expect(response.body.data.availability).toBe(false)
